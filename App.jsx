@@ -4,17 +4,18 @@ import {useDispatch, useSelector} from 'react-redux';
 import {inializeAppAction} from './src/redux/GPS/locationActions';
 import {library} from '@fortawesome/fontawesome-svg-core';
 import LinearGradient from 'react-native-linear-gradient';
+import DaysList from './src/components/mainPage/PageComponents/dayList';
 import {fas} from '@fortawesome/free-solid-svg-icons';
 library.add(fas);
 
-import {StyleSheet, Text, View, ScrollView} from 'react-native';
+import {StyleSheet, Text, View, FlatList} from 'react-native';
 
 function App() {
   const dispatch = useDispatch();
   const location = useSelector(state => state.location);
   const {cityName, loading} = useSelector(state => state.wheather);
+  const {loadingList} = useSelector(state => state.wheatherList);
   const {latitude, longitude, error} = location;
-
   useEffect(() => {
     dispatch(inializeAppAction());
   }, []);
@@ -37,75 +38,28 @@ function App() {
           <Main />
         </View>
       )}
-      <View style={scrolStyles.modalView}>
-        <View style={scrolStyles.centeredView}>
-          <ScrollView></ScrollView>
-        </View>
+      <View style={scrolStyles.container}>
+        {loadingList ? <Text>Loading...</Text> : <DaysList />}
       </View>
     </LinearGradient>
   );
 }
 const scrolStyles = StyleSheet.create({
-  modalStyle: {
-    justifyContent: 'center',
+  container: {
     alignItems: 'center',
-  },
-  centeredView: {
-    width: '90%',
-    height: '75%',
-    margin: 20,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    padding: 35,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-    opacity: 0.6,
-  },
-  modalView: {
-    justifyContent: 'flex-end',
-    height: '40%',
+    width: '100%',
   },
 });
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    backgroundColor: 'blue',
-  },
   mainView: {
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
   },
-  mainTempText: {
-    fontSize: 90,
-    fontWeight: '800',
-  },
-  iconStyle: {
-    color: 'grey',
-  },
-  detailsView: {
-    width: '70%',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  detailsViewIten: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  detailText: {
-    fontSize: 25,
+  sectionContainer: {
+    flex: 1,
+    height: '100%',
   },
 });
 

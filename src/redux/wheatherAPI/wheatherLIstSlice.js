@@ -3,44 +3,68 @@ import axios from 'axios';
 import {WEATHER_KEY} from '@env';
 
 function obterDataFormatada(objeto) {
-  const partes = objeto.split(' '); // Dividindo a string em duas partes: data e hora
-  const dataParte = partes[0]; // Parte que contém a data
-  const dataComponentes = dataParte.split('-'); // Dividindo a parte da data em ano, mês e dia
+  const [dataParte, horaParte] = objeto.split(' '); // Divide a string em data e hora
+  const [ano, mes, dia] = dataParte.split('-'); // Divide a parte da data em ano, mês e dia
+  const [hora, minutos, segundos] = horaParte.split(':'); // Divide a parte da hora em hora, minutos e segundos
 
-  const ano = dataComponentes[0];
-  const mes = dataComponentes[1];
-  const dia = dataComponentes[2];
+  const data = new Date(ano, mes - 1, dia, hora, minutos, segundos);
 
-  // Formando a string da data no formato desejado (dd/mm/yyyy)
-  const dataFormatada = `${mes}/${dia}/${ano}`;
-  const horaFormatada = partes[1];
+  return data;
+}
 
-  return {
-    data: dataFormatada,
-    hora: horaFormatada,
+function cleanListData(obj) {
+  const nomesDias = [
+    'Domingo',
+    'Segunda',
+    'Terça',
+    'Quarta',
+    'Quinta',
+    'Sexta',
+    'Sábado',
+  ];
+  let getNewDateHour = obterDataFormatada(obj.dt_txt);
+  let weekyDayNumber = getNewDateHour.getDay();
+  const weekDay = nomesDias[weekyDayNumber];
+  const newDate = getNewDateHour.toLocaleDateString('pt-BR', {
+    day: 'numeric',
+    month: 'numeric',
+  });
+  const newHour = getNewDateHour.toLocaleTimeString('pt-BR');
+  let newDataObj = {
+    data: newDate,
+    hour: newHour,
+    icon: `https://openweathermap.org/img/wn/${obj.weather[0].icon}@2x.png`,
+    temp: (obj.main.temp - 273.15).toFixed(1),
+    weekyDay: weekDay,
   };
+  return newDataObj;
 }
 
 const filterDays = data => {
   let objectsList = [];
-  objectsList.push(data[0]);
 
-  const dataAtual = new Date().toLocaleDateString();
-  console.log(dataAtual);
+  const dataAtual = new Date().toLocaleDateString('pt-BR', {
+    day: 'numeric',
+    month: 'numeric',
+  });
   const primeiroObj = data[0].dt_txt;
-  const dataHoraPrimeiroObj = obterDataFormatada(primeiroObj);
+  const primeiroObjData = obterDataFormatada(primeiroObj);
+  const horaPrimeiroObj = primeiroObjData.toLocaleTimeString();
 
   data.forEach(obj => {
-    const dataDoObjetoFormatada = obterDataFormatada(obj.dt_txt);
+    const dataObj = obterDataFormatada(obj.dt_txt);
+    const dataDoObjetoFormatada = dataObj.toLocaleDateString('pt-BR', {
+      day: 'numeric',
+      month: 'numeric',
+    });
+    const horaDoObjetoFormatada = dataObj.toLocaleTimeString();
 
-    if (
-      dataDoObjetoFormatada.data === dataAtual ||
-      dataDoObjetoFormatada.data === dataHoraPrimeiroObj.data
-    ) {
+    if (dataDoObjetoFormatada === dataAtual) {
       return;
     }
-    if (dataHoraPrimeiroObj.hora === dataDoObjetoFormatada.hora) {
-      objectsList.push(obj);
+    if (horaPrimeiroObj === horaDoObjetoFormatada) {
+      let newData = cleanListData(obj);
+      objectsList.push(newData);
     }
   });
   console.log(objectsList);
@@ -75,24 +99,23 @@ const wheatherListSlice = createSlice({
   name: 'wheatherList',
   initialState: {
     listData: [],
-    loading: true,
+    loadingList: true,
     error: null,
   },
   reducers: {},
   extraReducers: builder => {
     builder
       .addCase(getWheatherList.pending, state => {
-        state.loading = true;
+        state.loadingList = true;
         state.error = null;
       })
       .addCase(getWheatherList.fulfilled, (state, action) => {
         state.error = null;
-        state.loading = false;
-
         state.listData = filterDays(action.payload.list);
+        state.loadingList = false;
       })
       .addCase(getWheatherList.rejected, (state, action) => {
-        state.loading = false;
+        state.loadingList = false;
         state.error = action.error.message;
       });
   },

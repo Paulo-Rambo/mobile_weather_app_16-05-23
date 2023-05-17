@@ -1,15 +1,21 @@
+import {View, FlatList} from 'react-native';
+import styles from './style';
+import Day from '../dayItem';
+import {useSelector} from 'react-redux';
+
 export default function DaysList() {
+  const {listData} = useSelector(state => state.wheatherList);
   return (
-    <View style={styles.listView}>
-      <View style={styles.centeredView}>
-        <FlatList
-          showsHorizontalScrollIndicator={false}
-          style={styles.listStyle}
-          data={tasksList.reverse()}
-          renderItem={({item}) => {
-            return <Task item={item} />;
-          }}></FlatList>
-      </View>
+    <View style={styles.centeredView}>
+      <FlatList
+        showsHorizontalScrollIndicator={false}
+        horizontal={true}
+        style={styles.flatListStyle}
+        data={listData}
+        keyExtractor={item => item.data}
+        renderItem={({item}) => {
+          return <Day item={item} key={item.data} />;
+        }}></FlatList>
     </View>
   );
 }
