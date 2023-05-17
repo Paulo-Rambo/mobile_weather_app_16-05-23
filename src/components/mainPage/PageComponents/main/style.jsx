@@ -5,7 +5,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 24,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
     borderRadius: 25,
     paddingBottom: 25,
   },
@@ -16,10 +16,14 @@ const styles = StyleSheet.create({
   },
   mainTempText: {
     fontSize: 90,
-    fontWeight: '800',
+    color: '#393a38',
+    fontWeight: '900',
   },
-  iconStyle: {
-    color: 'grey',
+  iconStyleHumidity: {
+    color: '#0088ff',
+  },
+  iconStyleWind: {
+    color: '#9f9f9f',
   },
   detailsView: {
     width: '70%',

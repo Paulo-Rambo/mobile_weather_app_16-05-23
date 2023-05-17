@@ -16,7 +16,7 @@ export default function Main() {
         <View style={styles.detailsViewIten}>
           <FontAwesomeIcon
             icon={['fas', 'wind']}
-            style={styles.iconStyle}
+            style={styles.iconStyleWind}
             size={32}
           />
           <Text style={styles.detailText}> {mainWind} km/h</Text>
@@ -24,7 +24,7 @@ export default function Main() {
         <View style={styles.detailsViewIten}>
           <FontAwesomeIcon
             icon={['fas', 'droplet']}
-            style={styles.iconStyle}
+            style={styles.iconStyleHumidity}
             size={32}
           />
           <Text style={styles.detailText}> {mainHumidity}%</Text>

@@ -12,14 +12,14 @@ const styles = StyleSheet.create({
     marginRight: 12,
     marginLeft: 12,
     marginBottom: 15,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    backgroundColor: 'rgba(255, 255, 255, 0.4)',
     borderRadius: 20,
 
     justifyContent: 'center',
     alignItems: 'center',
   },
   dateText: {
-    color: '#4500a4',
+    color: '#00437d',
     fontSize: 16,
     fontWeight: 800,
     marginBottom: 4,
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   tempText: {
-    color: '#4500a4',
+    color: '#00437d',
     fontSize: 24,
     fontWeight: 800,
   },

@@ -8,9 +8,10 @@ const styles = StyleSheet.create({
   centeredView: {
     flexDirection: 'row',
 
-    width: '90%',
+    width: '100%',
     height: 250,
     margin: 20,
+    marginLeft: 70,
 
     borderRadius: 20,
     paddingTop: 25,
