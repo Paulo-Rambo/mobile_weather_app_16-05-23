@@ -1,5 +1,6 @@
-import {createSlice, createAsyncThunk, useSelector} from '@reduxjs/toolkit';
+import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import axios from 'axios';
+import {WEATHER_KEY} from '@env';
 
 export const getWheather = createAsyncThunk(
   'wheather/getWheather',
@@ -7,7 +8,7 @@ export const getWheather = createAsyncThunk(
     const {location} = getState();
     const {latitude, longitude} = location;
 
-    const apiKey = '03e31b2e9dc18e5349f0152296dbda2e';
+    const apiKey = WEATHER_KEY;
     const url = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${apiKey}`;
     const response = await axios.get(url);
     if (!response.data) {
@@ -21,7 +22,11 @@ const wheatherSlice = createSlice({
   name: 'wheather',
   initialState: {
     cityName: '',
-    loading: false,
+    mainTemp: '',
+    mainIcon: '',
+    mainWind: '',
+    mainHumidity: '',
+    loading: true,
     error: null,
   },
   reducers: {},
@@ -32,14 +37,20 @@ const wheatherSlice = createSlice({
         state.error = null;
       })
       .addCase(getWheather.fulfilled, (state, action) => {
-        console.log(action.payload);
         state.cityName = action.payload.name;
-        state.loading = false;
+        state.mainIcon = `https://openweathermap.org/img/wn/${action.payload.weather[0].icon}@4x.png`;
+        let kelvinToCelsus = action.payload.main.temp;
+        kelvinToCelsus = parseFloat(kelvinToCelsus);
+        kelvinToCelsus = kelvinToCelsus - 273.15;
+        state.mainTemp = kelvinToCelsus.toFixed(1);
+        state.mainWind = (action.payload.wind.speed * 3.6).toFixed(1);
+        state.mainHumidity = action.payload.main.humidity;
         state.error = null;
+        state.loading = false;
       })
       .addCase(getWheather.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message;
+        state.error = true;
       });
   },
 });
