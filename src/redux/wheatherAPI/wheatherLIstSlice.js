@@ -1,75 +1,7 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import axios from 'axios';
 import {WEATHER_KEY} from '@env';
-
-function obterDataFormatada(objeto) {
-  const [dataParte, horaParte] = objeto.split(' '); // Divide a string em data e hora
-  const [ano, mes, dia] = dataParte.split('-'); // Divide a parte da data em ano, mês e dia
-  const [hora, minutos, segundos] = horaParte.split(':'); // Divide a parte da hora em hora, minutos e segundos
-
-  const data = new Date(ano, mes - 1, dia, hora, minutos, segundos);
-
-  return data;
-}
-
-function cleanListData(obj) {
-  const nomesDias = [
-    'Domingo',
-    'Segunda',
-    'Terça',
-    'Quarta',
-    'Quinta',
-    'Sexta',
-    'Sábado',
-  ];
-  let getNewDateHour = obterDataFormatada(obj.dt_txt);
-  let weekyDayNumber = getNewDateHour.getDay();
-  const weekDay = nomesDias[weekyDayNumber];
-  const newDate = getNewDateHour.toLocaleDateString('pt-BR', {
-    day: 'numeric',
-    month: 'numeric',
-  });
-  const newHour = getNewDateHour.toLocaleTimeString('pt-BR');
-  let newDataObj = {
-    data: newDate,
-    hour: newHour,
-    icon: `https://openweathermap.org/img/wn/${obj.weather[0].icon}@2x.png`,
-    temp: (obj.main.temp - 273.15).toFixed(1),
-    weekyDay: weekDay,
-  };
-  return newDataObj;
-}
-
-const filterDays = data => {
-  let objectsList = [];
-
-  const dataAtual = new Date().toLocaleDateString('pt-BR', {
-    day: 'numeric',
-    month: 'numeric',
-  });
-  const primeiroObj = data[0].dt_txt;
-  const primeiroObjData = obterDataFormatada(primeiroObj);
-  const horaPrimeiroObj = primeiroObjData.toLocaleTimeString();
-
-  data.forEach(obj => {
-    const dataObj = obterDataFormatada(obj.dt_txt);
-    const dataDoObjetoFormatada = dataObj.toLocaleDateString('pt-BR', {
-      day: 'numeric',
-      month: 'numeric',
-    });
-    const horaDoObjetoFormatada = dataObj.toLocaleTimeString();
-
-    if (dataDoObjetoFormatada === dataAtual) {
-      return;
-    }
-    if (horaPrimeiroObj === horaDoObjetoFormatada) {
-      let newData = cleanListData(obj);
-      objectsList.push(newData);
-    }
-  });
-  console.log(objectsList);
-  return objectsList;
-};
+import {filterDays, cleanListData} from './wheatherListAuxFunc';
 
 export const getWheatherList = createAsyncThunk(
   'wheatherList/getWheatherList',
@@ -90,7 +22,7 @@ export const getWheatherList = createAsyncThunk(
         },
       };
     }
-    //console.log(response.data.list[1]);
+    console.log(response.data.list);
     return response.data;
   },
 );
@@ -98,11 +30,26 @@ export const getWheatherList = createAsyncThunk(
 const wheatherListSlice = createSlice({
   name: 'wheatherList',
   initialState: {
+    modalListStatus: false,
     listData: [],
+    objectDetails: [],
+    fullListData: [],
     loadingList: true,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    selectObjsDetailsReducer: (state, action) => {
+      const novaData = action.payload;
+      const novaLista = state.fullListData;
+      const novaListaFiltrada = novaLista.filter(obj => obj.data == novaData);
+      state.objectDetails = novaListaFiltrada;
+      state.modalListStatus = true;
+      console.log(novaListaFiltrada);
+    },
+    closeModalReducer: (state, action) => {
+      state.modalListStatus = false;
+    },
+  },
   extraReducers: builder => {
     builder
       .addCase(getWheatherList.pending, state => {
@@ -111,6 +58,10 @@ const wheatherListSlice = createSlice({
       })
       .addCase(getWheatherList.fulfilled, (state, action) => {
         state.error = null;
+        let id = 0;
+        state.fullListData = action.payload.list.map(obj =>
+          cleanListData(obj, (id += 1)),
+        );
         state.listData = filterDays(action.payload.list);
         state.loadingList = false;
       })
@@ -122,3 +73,5 @@ const wheatherListSlice = createSlice({
 });
 
 export default wheatherListSlice.reducer;
+export const {selectObjsDetailsReducer, closeModalReducer} =
+  wheatherListSlice.actions;

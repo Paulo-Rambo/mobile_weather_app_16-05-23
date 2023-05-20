@@ -1,5 +1,4 @@
-import {getWheather} from './locationSlice';
-
+import {getWheather} from './wheatherSlice';
 export const fetchWheather = () => {
   return async dispatch => {
     try {

@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     color: '#00437d',
     fontSize: 16,
     fontWeight: 800,
-    marginBottom: 4,
+    marginBottom: 10,
   },
   dateContainer: {
     flexDirection: 'row',

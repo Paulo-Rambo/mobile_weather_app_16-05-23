@@ -6,17 +6,16 @@ import {library} from '@fortawesome/fontawesome-svg-core';
 import LinearGradient from 'react-native-linear-gradient';
 import DaysList from './src/components/mainPage/PageComponents/dayList';
 import Header from './src/components/mainPage/PageComponents/header';
+import DetailsModal from './src/components/mainPage/PageComponents/detailsModal/modal';
 import {fas} from '@fortawesome/free-solid-svg-icons';
 library.add(fas);
 
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, ActivityIndicator} from 'react-native';
 
 function App() {
   const dispatch = useDispatch();
-  const location = useSelector(state => state.location);
-  const {cityName, loading} = useSelector(state => state.wheather);
+  const {loading} = useSelector(state => state.wheather);
   const {loadingList} = useSelector(state => state.wheatherList);
-  const {latitude, longitude, error} = location;
   useEffect(() => {
     dispatch(inializeAppAction());
   }, []);
@@ -26,7 +25,9 @@ function App() {
       colors={['#40a6ff', '#82c5ff', '#b5dcfe', '#a8d6fe', '#30d6ff']}
       style={styles.sectionContainer}>
       {loading ? (
-        <Text>Loading...</Text>
+        <View style={styles.centeredView}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
       ) : (
         <>
           <Header />
@@ -36,7 +37,16 @@ function App() {
         </>
       )}
       <View style={styles.containerScroll}>
-        {loadingList ? <Text>Loading...</Text> : <DaysList />}
+        {loadingList ? (
+          <View style={styles.centeredView}>
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        ) : (
+          <>
+            <DetailsModal />
+            <DaysList />
+          </>
+        )}
       </View>
     </LinearGradient>
   );
@@ -55,6 +65,13 @@ const styles = StyleSheet.create({
   containerScroll: {
     alignItems: 'center',
     width: '100%',
+  },
+  centeredView: {
+    flexDirection: 'column',
+    width: '100%',
+    height: 250,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

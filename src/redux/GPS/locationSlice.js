@@ -92,7 +92,13 @@ const locationSlice = createSlice({
     error: null,
     message: null,
   },
-  reducers: {},
+  reducers: {
+    userSelectLocation: (state, action) => {
+      console.log(action.payload.latitude);
+      state.latitude = action.payload.latitude;
+      state.longitude = action.payload.longitude;
+    },
+  },
   extraReducers: builder => {
     builder
       .addCase(getGpsPermission.rejected, (state, action) => {
@@ -123,3 +129,4 @@ const locationSlice = createSlice({
   },
 });
 export default locationSlice.reducer;
+export const {userSelectLocation} = locationSlice.actions;

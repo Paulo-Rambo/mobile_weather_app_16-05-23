@@ -2,6 +2,7 @@ import {StyleSheet} from 'react-native';
 
 const styles = StyleSheet.create({
   containerView: {
+    width: '85%',
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 24,
@@ -15,7 +16,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   mainTempText: {
-    fontSize: 90,
+    fontSize: 80,
     color: '#393a38',
     fontWeight: '900',
   },
@@ -26,7 +27,7 @@ const styles = StyleSheet.create({
     color: '#9f9f9f',
   },
   detailsView: {
-    width: '70%',
+    width: '95%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',

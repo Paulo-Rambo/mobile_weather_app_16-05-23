@@ -19,6 +19,7 @@ const styles = StyleSheet.create({
   },
   flatListStyle: {
     width: '100%',
+    marginRight: 30,
   },
 });
 
